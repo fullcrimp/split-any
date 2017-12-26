@@ -1,41 +1,10 @@
-let splitString = (str) => 
-    (str.indexOf(' ') === -1) 
-        ? str.split('') 
-        : str.split(' ')
-            .map((item) => splitString(item))
+let splitString = (str) => (str.indexOf(' ') === -1) ? str.split('')  : str.split(' ').map((item) => splitString(item)),
+    splitNumber = (num) => splitString(String(num)).map((item) => Number(item)),
+    splitFunction = (fn) => splitAny(fn()),
+    splitArray = (arr) => arr.map((item) => splitAny(item)),
+    splitObjectLiteral = (obj) => Object.keys(obj).map((key) => [key, obj[key]]),
+    splitObject = (obj) => Array.isArray(obj) ? splitArray(obj) : splitObjectLiteral(obj),
+    splitBoolean = (val) => { throw TypeError()},
+    splitRuleFn = (type) => eval('split' + type.charAt(0).toUpperCase() + type.slice(1))
 
-let splitNumber = (num) => 
-    splitString(num.toString())
-        .map((item) => Number(item))
-
-let splitFunction = (fn) => 
-    splitAny(fn())
-
-let splitArray = (arr) => 
-    arr.map((item) => splitAny(item))
-
-let splitObjectLiteral = (obj) => 
-    Object.keys(obj)
-        .map((key) => [key, obj[key]])
-
-let splitObject = (obj) =>
-    Array.isArray(obj)
-        ? splitArray(obj) 
-        : splitObjectLiteral(obj)
-
-let splitBoolean = (val) => 
-    TypeError()
-
-
-let splitFn = {
-    'number': splitNumber,
-    'boolean': splitBoolean,
-    'string': splitString,
-    'function': splitFunction,
-    'object': splitObject
-}
-
-module.exports = splitAny = (input) => 
-    splitFn[typeof input](input)
-
-
+module.exports = splitAny = (input) => splitRuleFn(typeof input)(input)
